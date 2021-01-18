@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block some_info %}
+    {% if slug_text %}
+        {% include 'more.html' with article_id=article_id %}
+        {% else %}
+        {% if article_id|divisibleby:'2' %}
+        <p>{{ article_id }} is even</p>
+            {% else %}
+        <p>{{ article_id }} is odd</p>
+        {% endif %}
+        {% endif %}
+{% endblock %}

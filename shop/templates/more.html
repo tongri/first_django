@@ -1,0 +1,6 @@
+<p>(via include due to slug text)</p>
+{% if article_id|divisibleby:'2' %}
+    <p>{{ article_id }} is even</p>
+{% else %}
+    <p>{{ article_id }} is odd</p>
+{% endif %}
