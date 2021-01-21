@@ -19,6 +19,7 @@ from django.urls import path, include, re_path
 from app.views import first, index, articles, archive, users, article_number, article_number_archive, phone, uniq
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path('', include('app.urls')),
     path('', index, name='main'),
 ]

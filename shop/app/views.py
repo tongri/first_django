@@ -17,6 +17,7 @@ class MyClass:
         self.string = s
 
 
+
 def index(request):
     slugger = ''.join(random.choices(string.ascii_lowercase, k = 5))
     article_id = random.randint(0, 99999)
