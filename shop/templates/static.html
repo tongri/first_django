@@ -1,10 +1,18 @@
 {% extends 'base.html' %}
 
 {% block some_info %}
+    {% if arts %}
+        {% for art in arts %}
+            <h3>{{  art.name }} by {{ art.author }}</h3>
+            <p>{{ art.text }}</p>
+        {% endfor %}
+    {% else %}
+        <h1>No article</h1>
+    {% endif %}
 <p>you are on the url named {{ name }}</p>
     {% if article_id %}
-    <a href="{% url 'article-with-number' article_id %}">url for random article</a>
-    <br>
-    <a href="{% url 'slug-article' article_id slugger %}">url for random slug</a>
+        <a href="{% url 'article-with-number' article_id %}">url for random article</a>
+        <br>
+        <a href="{% url 'slug-article' article_id slugger %}">url for random slug</a>
     {% endif %}
 {% endblock %}
