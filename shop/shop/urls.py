@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 
-from app.views import first, index, articles, archive, users, article_number, article_number_archive, phone, uniq
+from app.views import index
 
 urlpatterns = [
     path('admin/', admin.site.urls),

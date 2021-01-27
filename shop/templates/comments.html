@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block some_info %}
+    <form method="POST">
+        {% csrf_token %}
+        {%  for field in form %}
+            <p>{{ field }}</p>
+        {% endfor %}
+        <input type="submit" value="search">
+    </form>
+    {% if matches %}
+        {% for match in matches %}
+            <div>{{ match.user }}: {{ match.msg }}</div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
