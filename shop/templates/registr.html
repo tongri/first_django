@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block some_info %}
+    <form method="POST">
+        {% csrf_token%}
+        {% for field in form %}
+            <div>{{ field.label }}{{ field }}</div>
+            <br>
+        {% endfor %}
+        <input type="submit" value="Registrate">
+    </form>
+{% endblock %}

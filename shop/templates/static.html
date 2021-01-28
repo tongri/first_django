@@ -4,7 +4,21 @@
     {% if arts %}
         {% for art in arts %}
             <h3>{{  art.name }} by {{ art.author }}</h3>
-            <p>{{ art.text }}</p>
+            <p>No. {{ art.id }} {{ art.text }}</p>
+            {% for comm in comms %}
+                {% if comm.place.id == art.id %}
+                    <div>{{ comm }}</div>
+                {% endif %}
+            {% endfor %}
+            <form method="POST">
+                {% csrf_token %}
+                {% for field in form %}
+                    {{ field }}
+                    <input type="hidden" name="art_id" value="{{ art.id }}">
+                {% endfor %}
+                <br>
+                <input type="submit" value="comment">
+            </form>
         {% endfor %}
     {% else %}
         <h1>No article</h1>

@@ -1,13 +1,13 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
 
-from app.views import sorry, first, archive, articles, article_number, article_number_archive, users, phone, uniq, \
-    thanks, LogoutFormView, SearchFormView
-from app.views import EnglishFormView, LoginFormView, nologin
+from app.views import sorry, first, archive, article_number, article_number_archive, users, phone, uniq, \
+    thanks, LogoutFormView, SearchFormView, RegistrationFormView, comment, ChangePasswordView
+from app.views import EnglishFormView, LoginFormView, nologin, CommentFormView
 
 urlpatterns = [
     path('test/', first),
-    path('articles/', articles, name='mail-article'),
+    path('articles/', CommentFormView.as_view(), name='mail-article'),
     path('articles/archive/', archive, name='archive'),
     path('users/', users, name='users'),
     path('article/<int:article_id>/', article_number, name='article-with-number'),
@@ -23,4 +23,7 @@ urlpatterns = [
     path('nologin', nologin),
     path('logout/', LogoutFormView.as_view()),
     path('comments/', SearchFormView.as_view()),
+    path('registrate/', RegistrationFormView.as_view()),
+    path('articles/<int:article_id>/', comment),
+    path('change/', ChangePasswordView.as_view()),
 ]

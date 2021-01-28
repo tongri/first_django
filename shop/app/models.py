@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta
 
+from django.contrib.auth.models import AbstractUser, User
 from django.utils import timezone
 from django.db import models
 
-# Create your models here.
 
+# Create your models here.
 
 class Person(models.Model):
     name = models.CharField(max_length=20, null=True, blank=True)
@@ -19,15 +20,16 @@ class Person(models.Model):
 class Article(models.Model):
     name = models.CharField(max_length=20)
     text = models.TextField(default=None)
-    author = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='articles', default=None)
-    choice = models.ManyToManyField(Person, related_name='positive', blank=True, through='Mark', default=None)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='articles', default=None)
+    choice = models.ManyToManyField(User, related_name='positive', blank=True, through='Mark', default=None)
 
     def __str__(self):
         return self.name
 
+
 class Mark(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
-    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    person = models.ForeignKey(User, on_delete=models.CASCADE)
     opts = (('l', 'like'), ('d', 'dislike'))
     mark = models.CharField(max_length=10, choices=opts, default=None)
 
@@ -37,7 +39,7 @@ class Mark(models.Model):
 
 class Comment(models.Model):
     place = models.ForeignKey(Article, on_delete=models.CASCADE)
-    user = models.ForeignKey(Person, default=None, blank=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, default=None, blank=True, on_delete=models.CASCADE)
     msg = models.TextField(max_length=100, default=None)
     to_message = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, default=None)
     created_at = models.DateField(auto_now=True, null=True)

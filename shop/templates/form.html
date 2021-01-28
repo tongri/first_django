@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block some_info %}
-    <h1>Hi</h1>
+    <h1>Hi {% if user %}{{ user }}{% endif %}</h1>
     <form method="POST">
         {% csrf_token %}
         {% for field in form %}

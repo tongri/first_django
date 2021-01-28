@@ -1,11 +1,15 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
-from .forms import EnglishForm, LoginForm, LogoutForm, SearchForm, RegistrationForm
+from django.urls import reverse
+
+from .forms import EnglishForm, LoginForm, LogoutForm, SearchForm, RegistrationForm, CommentForm, ChangePassword
 from django.views.generic import FormView
 from django.contrib.auth import login, authenticate, logout
 import random
 import string
+from django.contrib.auth.models import User
+
 
 # Create your views here.
 
@@ -94,7 +98,65 @@ class RegistrationFormView(FormView):
 
     def get(self, request, *args, **kwargs):
         form = RegistrationForm()
-        return render(request)
+        return render(request, 'registr.html', {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            User.objects.create_user(username, email=None, password=password)
+            user = authenticate(request, username=username, password=password)
+            login(request, user)
+            return HttpResponse('great')
+        else:
+            return HttpResponse('passwords didnt match')
+
+class ChangePasswordView(LoginRequiredMixin, FormView):
+    http_method_names = ['get', 'post']
+    form_class = ChangePassword
+
+    def get(self, request, *args, **kwargs):
+        form = ChangePassword()
+        user = request.user
+        return render(request, 'form.html', {'form': form, 'user': user})
+
+    def post(self, request, *args, **kwargs):
+        form = ChangePassword(request.POST)
+        if form.is_valid():
+            old = form.cleaned_data.get('old')
+            u = authenticate(request, username=request.user, password=old)
+            if u is not None:
+                changed = User.objects.get(username=u.username)
+                changed.set_password(form.cleaned_data.get('new_conf'))
+                changed.save()
+            else:
+                return HttpResponse('sorry - old password is wrong')
+            return HttpResponse('nice')
+        else:
+            return HttpResponse("Passwords do not match")
+
+
+
+class CommentFormView(FormView):
+    http_method_names = ['get', 'post']
+    form_class = CommentForm
+
+    def get(self, request, *args, **kwargs):
+        form = CommentForm()
+        arts = Article.objects.all()
+        comms = Comment.objects.all()
+        return render(request, 'static.html', {'arts': arts, 'form': form, 'comms': comms})
+
+    def post(self, request, *args, **kwargs):
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            msg = form.cleaned_data.get('msg')
+            art_id = form.data.get('art_id')
+            user = request.user
+            place = Article.objects.filter(id=art_id)[0]
+            Comment.objects.create(user=user, msg=msg, place=place)
+        return HttpResponseRedirect(reverse('mail-article'))
 
 
 def nologin(request):
@@ -122,14 +184,6 @@ def index(request):
         'slugger': slugger,
         'article_id': article_id,
         'name': 'main',
-    })
-
-
-def articles(request):
-    arts = Article.objects.all()
-    return render(request, 'static.html', {
-        'name': 'users',
-        'arts': arts,
     })
 
 
@@ -168,3 +222,6 @@ def uniq(request, unique):
     return render(request, 'slugger.html', {
         'unique': unique,
     })
+
+def comment(request, article_id):
+    return HttpResponse(f'{article_id}')
