@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse
+from django.db.models import Q
 
 from .forms import EnglishForm, LoginForm, LogoutForm, SearchForm, RegistrationForm, CommentForm, ChangePassword
 from django.views.generic import FormView
@@ -83,13 +84,21 @@ class SearchFormView(FormView):
 
     def get(self, request, *args, **kwargs):
         form = SearchForm()
+        if not request.user.id:
+            del form.fields['tick']
         return render(request, 'comments.html', {'form': form})
 
     def post(self, request, *args, **kwargs):
         form = SearchForm(request.POST)
         if form.is_valid():
             look = form.cleaned_data['field']
-            matches = Comment.objects.filter(msg__icontains=look)
+            if request.user.id and form.cleaned_data.get('tick'):
+                q1 = Q(user__id=request.user.id)
+                q2 = Q(msg__icontains=look)
+                matches = Comment.objects.filter(q1&q2)
+            else:
+                matches = Comment.objects.filter(msg__icontains=look)
+                del form.fields['tick']
             return render(request, 'comments.html', {'form':form, 'matches': matches})
 
 class RegistrationFormView(FormView):

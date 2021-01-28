@@ -24,6 +24,7 @@ class LogoutForm(forms.Form):
 
 class SearchForm(forms.Form):
     field = forms.CharField(label='search', max_length=30, required=True)
+    tick = forms.BooleanField(label='search among own comments', required=False)
 
 
 class RegistrationForm(forms.Form):

@@ -51,4 +51,4 @@ class Comment(models.Model):
             self.created_at = timezone.now() - timedelta(days=365)
 
     def __str__(self):
-        return f'{self.user}: {self.msg[:10]}'
+        return f'{self.user}: {self.msg}'
